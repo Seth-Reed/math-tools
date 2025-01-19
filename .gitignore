@@ -1,0 +1,26 @@
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+env/
+venv/
+
+# Distribution artifacts
+build/
+dist/
+*.egg-info/
+
+# Test artifacts
+.coverage
+*.pytest_cache/
+.nox/
+
+# IDE/Editor files
+.vscode/
+.idea/
+*.swp
+
+# Miscellaneous
+.DS_Store
+*.log
