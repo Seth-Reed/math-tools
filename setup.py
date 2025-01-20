@@ -10,9 +10,10 @@ classifiers = [
 
 setup(
     name='polynomial-fit',
-    version='0.0.1',
+    version='0.0.2',
     description='Fit a polynomial of any order and dimension to a dataset',
     long_description=open('README.md').read() + '\n\n' + open('CHANGELOG.txt').read(),
+    long_description_content_type='text/markdown',
     url='',
     author='Seth Reed',
     author_email='seth.reed01@gmail.com',

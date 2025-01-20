@@ -139,7 +139,6 @@ def polynomial_fit(input_data, output_data, order, input_constraints=None, outpu
                       x0=initial_guess,
                       constraints=constraint)
     optimal_coeffs = list(result.x)
-
     # compute R^2
     r_squared = compute_r_squared(y_true=y,
                                   y_pred=polynomial_function(coeffs=optimal_coeffs,
@@ -230,18 +229,51 @@ def polynomial_to_string(terms, coefficients, variables):
     return poly_str
 
 
+def differentiate_polynomial(coeffs, terms, x):
+    """
+    Differentiate a polynomial with respect to a particular variable.
+
+    Parameters:
+    coefficients (list): list of coefficients corresponding to each term.
+    terms (list): list of terms, where each term is a list of powers for each variable.
+    x (list): A list pointing to which variable to differentiate the function with respect to.
+                [Ex: x = [0, 0, 1] would differentiate a 3 variable polynomial with respect to its third variable]
+
+    Returns:
+    tuple: a tuple containing the optimal polynomial coefficients and the corresponding list of terms.
+    """
+    derivative_coefficients = []
+    derivative_terms = []
+
+    n = len(x)
+    v = x.index(1)
+
+    for coeff, term in zip(coeffs, terms):
+        power = term.count(v)
+
+        if power > 0:
+            derivative_coefficient = power * coeff
+            index_to_pop = sum([term.count(i) for i in range(v)])
+            term.pop(index_to_pop)
+            derivative_coefficients.append(float(derivative_coefficient))
+            derivative_terms.append(term)
+
+
+    return derivative_coefficients, derivative_terms
+
+
 def one_D_example():
     def example_1D_function(x):
-        y = np.sin(2*np.pi*x / 5)
+        y = np.sin(2.*np.pi*x / 5.)
         return y
 
     # Generate example data
-    x_data = np.linspace(0, 5, 40)
+    x_data = np.linspace(0., 5., 40)
     y_data = example_1D_function(x_data)
 
     # Define Constraint(s)
-    x_constraints = np.array([0])
-    y_constraints = np.array([0])  # these force the polynomial to pass through the origin
+    x_constraints = np.array([0.])
+    y_constraints = np.array([0.])  # these force the polynomial to pass through the origin
 
     # Fit Polynomial
     order = 5
@@ -252,12 +284,14 @@ def one_D_example():
                                                       output_constraints=y_constraints)
 
     # Print Results
-    print('1-Dimensional Polynomial Fit Results')
-    print(f'Terms = {terms}')
-    print(f'Coefficients = {optimal_coeffs}')
-    print(f"R^2 = {r_squared}")
-    print(f'Polynomial Fit: y = ' + polynomial_to_string(terms, optimal_coeffs, ['x']))
-    print()
+    # print('1-Dimensional Polynomial Fit Results')
+    # print(f'Terms = {terms}')
+    # print(f'Coefficients = {optimal_coeffs}')
+    # print(f"R^2 = {r_squared}")
+    # print(f'Polynomial Fit: y = ' + polynomial_to_string(terms, optimal_coeffs, ['x']))
+    # print()
+
+    derivative_coeffs, derivative_terms = differentiate_polynomial(optimal_coeffs, terms, x=[1])
 
     # Get Points for Plotting
     x_range = np.linspace(x_data[0], x_data[-1], 100)
@@ -299,6 +333,8 @@ def two_D_example():
                                                       input_constraints=X_constraints,
                                                       output_constraints=y_constraints)
 
+    derivative_coeffs, derivative_terms = differentiate_polynomial(optimal_coeffs, terms, x=[0, 1])
+
     # Print Results
     print('2-Dimensional Polynomial Fit Results')
     print(f'Terms = {terms}')
@@ -328,7 +364,24 @@ def two_D_example():
 
 
 if __name__ == '__main__':
-    one_D_example()
-    two_D_example()
-    plt.show()
+    # one_D_example()
+    # two_D_example()
+    # plt.show()
+
+    num_var = 0
+    order = 16
+    terms = generate_terms(num_var, order)
+    coeffs = np.random.rand(len(terms))
+
+    print(terms)
+    print(coeffs)
+    print(polynomial_to_string(terms, coeffs, variables=['x', 'y']))
+    print()
+
+    d_coeffs, d_terms = differentiate_polynomial(coeffs, terms, x=[1,0])
+
+    print(d_terms)
+    print(d_coeffs)
+    print(polynomial_to_string(d_terms, d_coeffs, variables=['x', 'y']))
+
 
